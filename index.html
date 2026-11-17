@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Simulador de Máquina de Turing · 0ⁿ1ⁿ</title>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+<header>
+  <h1>Simulador de Máquina de Turing</h1>
+  <p>Comprueba si una cadena tiene la forma <strong>0ⁿ1ⁿ</strong>: primero <em>n</em> ceros y después exactamente <em>n</em> unos (con <em>n</em> &gt; 0).</p>
+</header>
+
+<main>
+  <!-- 1. Entrada y controles -->
+  <section class="tarjeta">
+    <h2>1. Escribe una cadena y empieza</h2>
+    <div class="fila-entrada">
+      <label for="entrada">Cadena de entrada (solo 0 y 1):</label>
+      <input id="entrada" type="text" maxlength="24" inputmode="numeric" autocomplete="off" placeholder="Ejemplo: 0011">
+    </div>
+    <p id="aviso" class="aviso" aria-live="polite"></p>
+
+    <div class="ejemplos">
+      <span>Se aceptan:</span>
+      <button class="chip ok" data-ejemplo="01">01</button>
+      <button class="chip ok" data-ejemplo="0011">0011</button>
+      <button class="chip ok" data-ejemplo="000111">000111</button>
+      <span>Se rechazan:</span>
+      <button class="chip mal" data-ejemplo="001">001</button>
+      <button class="chip mal" data-ejemplo="0101">0101</button>
+      <button class="chip mal" data-ejemplo="10">10</button>
+    </div>
+
+    <div class="botones">
+      <button id="btnPaso" class="btn btn-paso">Paso a paso</button>
+      <button id="btnTodo" class="btn btn-todo">Ejecutar todo</button>
+      <button id="btnLimpiar" class="btn btn-limpiar">Limpiar</button>
+      <label class="velocidad">Velocidad:
+        <select id="velocidad">
+          <option value="1200">Lenta</option>
+          <option value="600" selected>Normal</option>
+          <option value="200">Rápida</option>
+        </select>
+      </label>
+    </div>
+
+    <details>
+      <summary>¿Cómo funciona? (explicación sencilla)</summary>
+      <p>La máquina lee una cinta de casillas, una a la vez, con un cabezal (▼). Por cada <strong>0</strong> que encuentra, lo tacha con una <strong>X</strong>, busca el primer <strong>1</strong> sin tachar y lo tacha con una <strong>Y</strong>. Así va formando parejas 0-1. Si al final todo quedó tachado y no sobra nada, la cadena <strong>se acepta</strong>; si sobra algún 0 o algún 1, <strong>se rechaza</strong>.</p>
+    </details>
+  </section>
+
+  <!-- 2. Cinta, estado y resultado -->
+  <section class="tarjeta">
+    <h2>2. La cinta y el cabezal</h2>
+    <div class="cinta-contenedor"><div id="cinta" class="cinta" aria-label="Cinta de la máquina"></div></div>
+    <div class="leyenda">
+      <span><i class="l-v"></i>□ casilla vacía</span>
+      <span><i class="l-x"></i>X un 0 ya emparejado</span>
+      <span><i class="l-y"></i>Y un 1 ya emparejado</span>
+      <span>▼ cabezal (casilla que se está leyendo)</span>
+    </div>
+
+    <div class="panel">
+      <div class="dato" id="datoEstado">
+        <div class="titulo">Estado actual</div>
+        <div class="valor" id="estado">q0</div>
+        <div class="detalle" id="estadoDesc"></div>
+      </div>
+      <div class="dato">
+        <div class="titulo">Pasos realizados</div>
+        <div class="valor" id="pasos">0</div>
+      </div>
+      <div class="dato">
+        <div class="titulo">Símbolo bajo el cabezal</div>
+        <div class="valor" id="leido">0</div>
+      </div>
+    </div>
+
+    <div class="explica" id="explica" aria-live="polite"></div>
+    <div id="resultado" class="resultado oculto" aria-live="assertive"></div>
+  </section>
+
+  <!-- 3. Tabla de transiciones -->
+  <section class="tarjeta">
+    <h2>3. Tabla de transiciones (las reglas de la máquina)</h2>
+    <div class="tabla-scroll">
+      <table id="tabla">
+        <thead>
+          <tr><th>Estado</th><th>Lee</th><th>Escribe</th><th>Mueve</th><th>Nuevo estado</th><th>¿Qué hace?</th></tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+    <p class="nota">La fila resaltada es la regla que se aplicó en el último paso. Si la máquina llega a una situación que no está en la tabla, la cadena se <strong>rechaza</strong>.</p>
+  </section>
+
+  <!-- 4. Registro -->
+  <section class="tarjeta">
+    <h2>4. Registro de transiciones aplicadas</h2>
+    <ol id="registro"></ol>
+  </section>
+</main>
+
+<!-- Orden importa: datos → lógica → vista → controlador -->
+<script src="js/config.js"></script>
+<script src="js/maquina.js"></script>
+<script src="js/vista.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>
